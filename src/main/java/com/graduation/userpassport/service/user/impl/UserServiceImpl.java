@@ -1,5 +1,7 @@
 package com.graduation.userpassport.service.user.impl;
 
+import com.graduation.common.jwt.JwtUserContext;
+import com.graduation.common.jwt.JwtUserContextHolder;
 import com.graduation.userpassport.business.user.UserBusiness;
 import com.graduation.userpassport.business.user.UserIdentityBusiness;
 import com.graduation.userpassport.business.user.UserLoginBusiness;
@@ -16,8 +18,6 @@ import com.graduation.userpassport.dto.user.UserMeRequest;
 import com.graduation.userpassport.dto.user.UserMeResponse;
 import com.graduation.userpassport.dto.user.UserQueryRequest;
 import com.graduation.userpassport.service.user.UserService;
-import com.graduation.userpassport.utils.security.JwtUserContext;
-import com.graduation.userpassport.utils.security.JwtUserContextHolder;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;

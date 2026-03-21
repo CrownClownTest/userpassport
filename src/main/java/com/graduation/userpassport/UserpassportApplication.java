@@ -3,7 +3,7 @@ package com.graduation.userpassport;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.graduation,com.graduation.common.jwt")
 public class UserpassportApplication {
 
 	public static void main(String[] args) {

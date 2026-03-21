@@ -1,5 +1,6 @@
 package com.graduation.userpassport.business.user;
 
+import com.graduation.common.jwt.JwtUtils;
 import com.graduation.userpassport.bo.user.UserInfoBO;
 import com.graduation.userpassport.bo.user.UserLoginBO;
 import com.graduation.userpassport.bo.user.UserLoginResultBO;
@@ -7,7 +8,6 @@ import com.graduation.userpassport.resource.user.entity.LoginHistoryEntity;
 import com.graduation.userpassport.resource.user.entity.UserInfoEntity;
 import com.graduation.userpassport.resource.user.repository.LoginHistoryRepository;
 import com.graduation.userpassport.resource.user.repository.UserInfoRepository;
-import com.graduation.userpassport.utils.security.JwtUtils;
 import com.graduation.userpassport.utils.security.PasswordHashUtils;
 import io.jsonwebtoken.Claims;
 import org.springframework.stereotype.Component;
