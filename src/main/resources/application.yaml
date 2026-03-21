@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: userpassport
+  config:
+    import: classpath:spring-db.yml
+
+jwt:
+  secret: mySecretKey123456789012345678901234567890
+  expiration: 86400 # 24小时
