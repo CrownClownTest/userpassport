@@ -21,6 +21,17 @@ configurations {
 
 repositories {
 	mavenLocal()
+	maven {
+		name = "GitHubPackages-jwt-security-spring-boot-starter"
+		url = uri("https://maven.pkg.github.com/CrownClownTest/jwt-security-spring-boot-starter")
+		credentials {
+			username = "CrownClownTest"
+			password = "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"
+		}
+		content {
+			includeModule("com.graduation", "jwt-security-spring-boot-starter")
+		}
+	}
 	mavenCentral()
 	maven { url = 'https://repo.spring.io/snapshot' }
 }
