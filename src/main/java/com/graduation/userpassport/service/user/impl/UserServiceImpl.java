@@ -18,11 +18,9 @@ import com.graduation.userpassport.dto.user.UserMeRequest;
 import com.graduation.userpassport.dto.user.UserMeResponse;
 import com.graduation.userpassport.dto.user.UserQueryRequest;
 import com.graduation.userpassport.service.user.UserService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.graduation.userpassport.utils.web.ServletRequestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -59,11 +57,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public LoginResponse login(LoginRequest request) {
         UserLoginBO loginBO = LoginConverter.toBO(request);
-        HttpServletRequest httpServletRequest = currentRequest();
-        if (httpServletRequest != null) {
-            loginBO.setLoginIp(getClientIp(httpServletRequest));
-            loginBO.setLoginDevice(getUserAgent(httpServletRequest));
-        }
+        loginBO.setLoginIp(ServletRequestUtils.getClientIp());
+        loginBO.setLoginDevice(ServletRequestUtils.getUserAgent());
         UserLoginResultBO resultBO = userLoginBusiness.login(loginBO);
         
         if (!resultBO.isSuccess()) {
@@ -79,39 +74,6 @@ public class UserServiceImpl implements UserService {
                 .userInfo(userConverter.toDTO(resultBO.getUserInfo()))
                 .identities(userConverter.toIdentityDTOs(userIdentityBusiness.queryActiveIdentities(userId)))
                 .build();
-    }
-
-    private HttpServletRequest currentRequest() {
-        if (RequestContextHolder.getRequestAttributes() instanceof ServletRequestAttributes attributes) {
-            return attributes.getRequest();
-        }
-        return null;
-    }
-
-    private String getClientIp(HttpServletRequest request) {
-        String xForwardedFor = request.getHeader("X-Forwarded-For");
-        if (xForwardedFor != null && !xForwardedFor.isBlank()) {
-            int commaIndex = xForwardedFor.indexOf(',');
-            String ip = commaIndex > 0 ? xForwardedFor.substring(0, commaIndex) : xForwardedFor;
-            return ip.trim();
-        }
-        String realIp = request.getHeader("X-Real-IP");
-        if (realIp != null && !realIp.isBlank()) {
-            return realIp.trim();
-        }
-        return request.getRemoteAddr();
-    }
-
-    private String getUserAgent(HttpServletRequest request) {
-        String ua = request.getHeader("User-Agent");
-        if (ua == null) {
-            return null;
-        }
-        String trimmed = ua.trim();
-        if (trimmed.length() <= 255) {
-            return trimmed;
-        }
-        return trimmed.substring(0, 255);
     }
 
     @Override
