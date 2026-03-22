@@ -1,7 +1,6 @@
 package com.graduation.userpassport.business.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.alibaba.fastjson2.JSON;
 import com.graduation.userpassport.bo.user.operation.UserOperationLogCreateBO;
 import com.graduation.userpassport.resource.user.entity.UserOperationLogEntity;
 import com.graduation.userpassport.resource.user.repository.UserOperationLogRepository;
@@ -10,11 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserOperationLogBusiness {
     private final UserOperationLogRepository userOperationLogRepository;
-    private final ObjectMapper objectMapper;
 
-    public UserOperationLogBusiness(UserOperationLogRepository userOperationLogRepository, ObjectMapper objectMapper) {
+    public UserOperationLogBusiness(UserOperationLogRepository userOperationLogRepository) {
         this.userOperationLogRepository = userOperationLogRepository;
-        this.objectMapper = objectMapper;
     }
 
     public void record(UserOperationLogCreateBO logBO) {
@@ -44,8 +41,8 @@ public class UserOperationLogBusiness {
             return null;
         }
         try {
-            return objectMapper.writeValueAsString(value);
-        } catch (JsonProcessingException e) {
+            return JSON.toJSONString(value);
+        } catch (Exception e) {
             throw new IllegalArgumentException("操作日志 JSON 序列化失败", e);
         }
     }
