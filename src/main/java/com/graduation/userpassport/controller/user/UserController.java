@@ -7,6 +7,7 @@ import com.graduation.userpassport.dto.user.UserInfoDTO;
 import com.graduation.userpassport.dto.user.UserMeRequest;
 import com.graduation.userpassport.dto.user.UserMeResponse;
 import com.graduation.userpassport.dto.user.UserQueryRequest;
+import com.graduation.userpassport.dto.user.UpdateUserMeRequest;
 import com.graduation.userpassport.service.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -82,5 +83,42 @@ public class UserController {
         } catch (IllegalArgumentException ex) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex);
         }
+    }
+
+    @Operation(
+            summary = "用户修改自己信息",
+            parameters = {
+                    @Parameter(
+                            name = "Authorization",
+                            in = ParameterIn.HEADER,
+                            required = true,
+                            description = "Bearer <JWT>"
+                    )
+            }
+    )
+    @PostMapping("/update-me")
+    public UserInfoDTO updateMe(@Valid @RequestBody UpdateUserMeRequest request) {
+        try {
+            return userService.updateMe(request);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(resolveUpdateStatus(ex), ex.getMessage(), ex);
+        }
+    }
+
+    private HttpStatus resolveUpdateStatus(IllegalArgumentException ex) {
+        String message = ex.getMessage();
+        if (message == null) {
+            return HttpStatus.BAD_REQUEST;
+        }
+        if (message.contains("未登录") || message.contains("JWT")) {
+            return HttpStatus.UNAUTHORIZED;
+        }
+        if (message.contains("原密码")) {
+            return HttpStatus.FORBIDDEN;
+        }
+        if (message.contains("已被使用") || message.contains("已注册") || message.contains("唯一")) {
+            return HttpStatus.CONFLICT;
+        }
+        return HttpStatus.BAD_REQUEST;
     }
 }

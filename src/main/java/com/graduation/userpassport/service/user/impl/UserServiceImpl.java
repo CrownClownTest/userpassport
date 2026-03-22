@@ -17,6 +17,7 @@ import com.graduation.userpassport.dto.user.UserInfoDTO;
 import com.graduation.userpassport.dto.user.UserMeRequest;
 import com.graduation.userpassport.dto.user.UserMeResponse;
 import com.graduation.userpassport.dto.user.UserQueryRequest;
+import com.graduation.userpassport.dto.user.UpdateUserMeRequest;
 import com.graduation.userpassport.service.user.UserService;
 import com.graduation.userpassport.utils.web.ServletRequestUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,5 +89,21 @@ public class UserServiceImpl implements UserService {
                 .userInfo(userConverter.toDTO(userBusiness.queryByUserId(userId)))
                 .identities(userConverter.toIdentityDTOs(userIdentityBusiness.queryActiveIdentities(userId)))
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public UserInfoDTO updateMe(UpdateUserMeRequest request) {
+        JwtUserContext ctx = JwtUserContextHolder.get();
+        if (ctx == null || ctx.getUserId() == null) {
+            throw new IllegalArgumentException("未登录或 JWT 无效");
+        }
+        Long userId = ctx.getUserId();
+
+        var updateBO = userConverter.toUpdateMeBO(request, userId);
+        updateBO.setIpAddress(ServletRequestUtils.getClientIp());
+        updateBO.setUserAgent(ServletRequestUtils.getUserAgent());
+
+        return userConverter.toDTO(userBusiness.updateMe(updateBO));
     }
 }

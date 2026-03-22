@@ -1,6 +1,8 @@
 create database userpassport;
 
 comment on database userpassport is '用户库';
+
+-----------------------------------------------------------------------
 --用户信息表
 CREATE TABLE IF NOT EXISTS user_info
 (
@@ -24,6 +26,7 @@ COMMENT ON COLUMN user_info.nickname IS '用户昵称';
 COMMENT ON COLUMN user_info.password IS '密码（建议加密存储）';
 COMMENT ON COLUMN user_info.created_at IS '创建时间';
 
+-----------------------------------------------------------------------
 -- 登录历史表（基于JWT验证机制）
 CREATE TABLE IF NOT EXISTS login_history
 (
@@ -61,6 +64,7 @@ COMMENT ON COLUMN login_history.status IS '登录状态（成功/失败）';
 COMMENT ON COLUMN login_history.error_msg IS '错误信息（如果登录失败）';
 COMMENT ON COLUMN login_history.token_revoked IS '令牌是否被撤销（用于登出或令牌失效管理）';
 
+-----------------------------------------------------------------------
 -- 用户身份表
 CREATE TABLE IF NOT EXISTS user_identity
 (
@@ -89,6 +93,7 @@ COMMENT ON COLUMN user_identity.status IS '身份状态（ACTIVE/INACTIVE）';
 COMMENT ON COLUMN user_identity.created_at IS '创建时间';
 COMMENT ON COLUMN user_identity.updated_at IS '更新时间';
 
+-----------------------------------------------------------------------
 -- 身份定义表（存储所有可能的身份类型）
 CREATE TABLE IF NOT EXISTS identity_definition
 (
@@ -120,3 +125,38 @@ INSERT INTO identity_definition (code, name, description) VALUES
 ('admin', '管理员', '系统管理员，拥有所有权限'),
 ('user', '用户', '普通用户，拥有基础权限')
 ON CONFLICT (code) DO NOTHING; -- 避免重复插入
+
+-----------------------------------------------------------------------
+-- 用户操作日志表
+CREATE TABLE IF NOT EXISTS user_operation_log
+(
+    log_id       BIGSERIAL PRIMARY KEY,
+    operator_id  BIGINT, -- 操作人ID，关联user_info表
+    target_user_id BIGINT NOT NULL, -- 被操作人ID，关联user_info表
+    operation_type VARCHAR(50) NOT NULL, -- 操作类型（如：UPDATE_USER_INFO、CHANGE_STATUS等）
+    operation_detail TEXT, -- 操作详情（JSON格式存储）
+    old_value    TEXT, -- 旧值（JSON格式存储）
+    new_value    TEXT, -- 新值（JSON格式存储）
+    ip_address   VARCHAR(50), -- 操作IP地址
+    user_agent   VARCHAR(255), -- 操作设备信息
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建索引
+CREATE INDEX IF NOT EXISTS idx_user_operation_log_operator_id ON user_operation_log (operator_id);
+CREATE INDEX IF NOT EXISTS idx_user_operation_log_target_user_id ON user_operation_log (target_user_id);
+CREATE INDEX IF NOT EXISTS idx_user_operation_log_operation_type ON user_operation_log (operation_type);
+CREATE INDEX IF NOT EXISTS idx_user_operation_log_created_at ON user_operation_log (created_at);
+
+-- 添加表和字段注释
+COMMENT ON TABLE user_operation_log IS '用户操作日志表，记录用户信息和状态的修改操作';
+COMMENT ON COLUMN user_operation_log.log_id IS '日志ID，自增主键';
+COMMENT ON COLUMN user_operation_log.operator_id IS '操作人ID，关联user_info表（BIGINT类型，对应Java的long），如果是用户自己操作则与target_user_id相同';
+COMMENT ON COLUMN user_operation_log.target_user_id IS '被操作人ID，关联user_info表（BIGINT类型，对应Java的long）';
+COMMENT ON COLUMN user_operation_log.operation_type IS '操作类型（如：UPDATE_USER_INFO、CHANGE_STATUS等）';
+COMMENT ON COLUMN user_operation_log.operation_detail IS '操作详情（JSON格式存储）';
+COMMENT ON COLUMN user_operation_log.old_value IS '旧值（JSON格式存储）';
+COMMENT ON COLUMN user_operation_log.new_value IS '新值（JSON格式存储）';
+COMMENT ON COLUMN user_operation_log.ip_address IS '操作IP地址';
+COMMENT ON COLUMN user_operation_log.user_agent IS '操作设备信息';
+COMMENT ON COLUMN user_operation_log.created_at IS '操作时间';

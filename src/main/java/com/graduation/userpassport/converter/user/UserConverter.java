@@ -4,11 +4,13 @@ import com.graduation.userpassport.bo.user.UserIdentityBO;
 import com.graduation.userpassport.bo.user.UserInfoBO;
 import com.graduation.userpassport.bo.user.UserQueryBO;
 import com.graduation.userpassport.bo.user.UserRegisterBO;
+import com.graduation.userpassport.bo.user.UserUpdateMeBO;
 import com.graduation.userpassport.constant.user.UserQueryTypeEnum;
 import com.graduation.userpassport.dto.user.RegisterUserRequest;
 import com.graduation.userpassport.dto.user.UserIdentityDTO;
 import com.graduation.userpassport.dto.user.UserInfoDTO;
 import com.graduation.userpassport.dto.user.UserQueryRequest;
+import com.graduation.userpassport.dto.user.UpdateUserMeRequest;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,6 +31,18 @@ public class UserConverter {
         return UserQueryBO.builder()
                 .queryType(UserQueryTypeEnum.fromId(request.getQueryTypeId()))
                 .queryValue(request.getQueryValue())
+                .build();
+    }
+
+    public UserUpdateMeBO toUpdateMeBO(UpdateUserMeRequest request, Long userId) {
+        return UserUpdateMeBO.builder()
+                .userId(userId)
+                .oldPassword(request.getOldPassword())
+                .email(request.getEmail())
+                .phone(request.getPhone())
+                .nickname(request.getNickname())
+                .newPassword(request.getNewPassword())
+                .scene(request.getScene())
                 .build();
     }
 
