@@ -26,7 +26,7 @@ repositories {
 		url = uri("https://maven.pkg.github.com/CrownClownTest/jwt-security-spring-boot-starter")
 		credentials {
 			username = "CrownClownTest"
-			password = "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"
+			password = "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"
 		}
 		content {
 			includeModule("com.graduation", "jwt-security-spring-boot-starter")
