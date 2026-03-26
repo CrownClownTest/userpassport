@@ -3,3 +3,12 @@ spring:
     name: userpassport
   config:
     import: classpath:spring-db.yml
+jwt:
+  exclude-paths:
+    - /api/users/login
+    - /api/users/register
+    - /v3/api-docs/**
+    - /swagger-ui/**
+    - /swagger-ui.html
+    - /error
+    - /api/identity/list
