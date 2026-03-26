@@ -22,12 +22,8 @@ configurations {
 repositories {
 	mavenLocal()
 	maven {
-		name = "GitHubPackages-jwt-security-spring-boot-starter"
-		url = uri("https://maven.pkg.github.com/CrownClownTest/jwt-security-spring-boot-starter")
-		credentials {
-			username = "CrownClownTest"
-			password = "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"
-		}
+		name = 'cnb'
+		url = 'https://maven.cnb.cool/crownclowngx/jwt-spring-boot-starter/-/packages/'
 		content {
 			includeModule("com.graduation", "jwt-security-spring-boot-starter")
 		}
@@ -53,7 +49,7 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 	// Source: https://mvnrepository.com/artifact/com.alibaba.fastjson2/fastjson2
 	implementation("com.alibaba.fastjson2:fastjson2:2.0.61")
-	implementation('com.graduation:jwt-security-spring-boot-starter:1.0.15')
+	implementation('com.graduation:jwt-security-spring-boot-starter:0.0.1-RELEASE')
 }
 
 tasks.named('test') {
